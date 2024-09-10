@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basic styling for the calculator */
+        /* .calculator {
+            max-width: 200px;
+            margin: 0 auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #screen {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1.5em;
+            box-sizing: border-box;
+        }
+        button {
+            width: 23%;
+            padding: 10px;
+            margin: 1%;
+            font-size: 1.2em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        button.operator {
+            background-color: #f0ad4e;
+            color: white;
+        }
+        button.eqbtn {
+            background-color: #5bc0de;
+            color: white;
+        } */
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" placeholder="0" id="screen" readonly>
+        <div>
+            <button class="operator">AC</button>
+            <button class="operator">DEL</button>
+            <button class="operator">%</button>
+            <button class="operator">/</button>
+        </div>
+        <div>
+            <button>7</button>
+            <button>8</button>
+            <button>9</button>
+            <button class="operator">*</button>
+        </div>
+        <div>
+            <button>4</button>
+            <button>5</button>
+            <button>6</button>
+            <button class="operator">-</button>
+        </div>
+        <div>
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+            <button class="operator">+</button>
+        </div>
+        <div>
+            <button>00</button>
+            <button>0</button>
+            <button>.</button>
+            <button class="eqbtn">=</button>
+        </div>
+    </div>
+
+    <script>
+        var screen = document.getElementById("screen");
+        var buttons = document.querySelectorAll("button");
+
+        var currentInput = "";
+        var operator = "";
+        var shouldResetScreen = false;
+
+        function updateScreen(value) {
+            screen.value = value;
+        }
+
+        function handleInput(input) {
+            if (input >= '0' && input <= '9' || input === '.') {
+                if (shouldResetScreen) {
+                    updateScreen("");
+                    shouldResetScreen = false;
+                }
+                currentInput += input;
+                updateScreen(currentInput);
+            } else if (input === 'AC') {
+                currentInput = "";
+                operator = "";
+                updateScreen("0");
+            } else if (input === 'DEL') {
+                currentInput = currentInput.slice(0, -1);
+                updateScreen(currentInput || "0");
+            } else if (input === '%') {
+                currentInput = (parseFloat(currentInput) / 100).toString();
+                updateScreen(currentInput);
+            } else if (input === '=') {
+                try {
+                    currentInput = eval(currentInput).toString();
+                    updateScreen(currentInput);
+                } catch (error) {
+                    updateScreen("Error");
+                    currentInput = "";
+                }
+                shouldResetScreen = true;
+            } else if (['+', '-', '*', '/'].includes(input)) {
+                if (operator) {
+                    currentInput = currentInput.slice(0, -1) + input;
+                } else {
+                    currentInput += input;
+                }
+                operator = input;
+                shouldResetScreen = false;
+                updateScreen(currentInput);
+            }
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener("click", (e) => {
+                var buttonText = e.target.innerText;
+                handleInput(buttonText);
+            });
+        });
+
+        document.addEventListener("keydown", (e) => {
+            var key = e.key;
+
+            if (key >= '0' && key <= '9' || key === '.') {
+                handleInput(key);
+            } else if (key === 'Escape') {
+                handleInput('AC');
+            } else if (key === 'Backspace') {
+                handleInput('DEL');
+            } else if (key === '%') {
+                handleInput('%');
+            } else if (key === '/') {
+                handleInput('/');
+            } else if (key === '*') {
+                handleInput('*');
+            } else if (key === '-') {
+                handleInput('-');
+            } else if (key === '+') {
+                handleInput('+');
+            } else if (key === 'Enter') {
+                handleInput('=');
+            }
+        });
+    </script>
+</body>
+</html>
